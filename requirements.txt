@@ -1,0 +1,9 @@
+python2.7
+numpy
+keras
+theano
+pillow
+pandas
+matplotlib
+mingw libpython
+h5py

@@ -53,7 +53,7 @@ np.random.seed(1337)  # for reproducibility
 K.set_image_dim_ordering('th')
 batch_size = 128
 nb_classes = 7
-nb_epoch = 2
+nb_epoch = 100
 
 img_rows, img_cols = 48, 48
 

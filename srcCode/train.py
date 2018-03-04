@@ -1,26 +1,14 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from load_data import faces_load_data
-from keras.models import Sequential
-from keras.layers.core import Dense, Dropout, Activation, Flatten
-from keras.layers.convolutional import Convolution2D, MaxPooling2D
-import numpy as np
-import csv
-from keras.optimizers import SGD
-from keras.optimizers import Adam
-from keras.layers import Dense
 from keras.layers import Dropout
 from keras.layers import Flatten
 from keras.layers.convolutional import Convolution2D
 from keras.layers.convolutional import MaxPooling2D
-from PIL import Image
 from keras.models import Sequential
 from keras.layers.core import Dense, Activation
 import numpy as np
 from keras.callbacks import Callback
-import pandas
-import matplotlib.pyplot as plt
-import keras
 from keras.utils import np_utils
 from keras import backend as K
 
@@ -41,9 +29,38 @@ class TrainingHistory(Callback):
             self.predictions.append(pred)
 
 
+def save_model_and_weights(model) :
+    model.save('cnn_model.h5')
+    model.save_weights('cnn_model_weights.h5')
+
+def get_model():
+    # model architecture:
+    model = Sequential()
+    model.add(Convolution2D(32, 3, 3, border_mode='full', input_shape=(1, 48, 48), activation='relu'))
+    model.add(Convolution2D(32, 3, 3, border_mode='full', activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.1))
+
+    model.add(Convolution2D(64, 3, 3, border_mode='full', activation='relu'))
+    model.add(Convolution2D(64, 3, 3, border_mode='full', activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.1))
+
+    model.add(Convolution2D(128, 3, 3, border_mode='full', activation='relu'))
+    model.add(Convolution2D(128, 3, 3, border_mode='full', activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.4))
+
+    model.add(Flatten())
+    model.add(Dense(2048, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(num_classes, activation='softmax'))
+    model.summary()
+
+    return model
+
 
 ###############################################
-
 
 
 
@@ -85,48 +102,14 @@ print (Y_train.shape)
 num_classes = Y_train.shape[1]
 print (num_classes)
 
-# model architecture:
-model = Sequential()
-model.add(Convolution2D(32, 3, 3, border_mode='full', input_shape=(1, 48, 48), activation='relu'))
-model.add(Convolution2D(32, 3, 3, border_mode='full', activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.1))
-
-
-model.add(Convolution2D(64, 3, 3, border_mode='full', activation='relu'))
-model.add(Convolution2D(64, 3, 3, border_mode='full', activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.1))
-
-model.add(Convolution2D(128, 3, 3, border_mode='full', activation='relu'))
-model.add(Convolution2D(128, 3, 3, border_mode='full', activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.4))
-
-
-
-model.add(Flatten())
-model.add(Dense(2048, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(num_classes,activation='softmax'))
-model.summary()
-
+model = get_model()
 history = TrainingHistory()
 # optimizer:
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.save('model_221.h5')
-#model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 print ('Training....')
 model.fit(X_train, Y_train, nb_epoch=nb_epoch, batch_size=batch_size, shuffle=False, verbose=1, validation_data=(X_test, Y_test), callbacks=[history])
 
-####################
-
-
-
-
-
-#model.load_weights('my_model_weights_20_11.h5')
-model.save_weights('my_model_221.h5')   
+save_model_and_weights(model)
 score = model.evaluate(X_test, Y_test, show_accuracy=True, verbose=0)
 print('Test score:', score[0])
 print('Test accuracy:', score[1])
@@ -140,3 +123,4 @@ writer = csv.writer(ofile, delimiter=',')
 x = [1,3,4]
 writer.writerow(history.losses)
 ofile.close()
+

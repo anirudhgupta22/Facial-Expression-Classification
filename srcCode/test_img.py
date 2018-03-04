@@ -2,32 +2,13 @@
 """
 Created on Wed Nov 23 15:02:12 2016
 
-@author: Annu
+@author: Anirudh
 """
 
-import time
-import numpy as np
 import cv2
-import os
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers import Dropout
-from keras.layers import Flatten
-from keras.layers.convolutional import Convolution2D
-from keras.layers.convolutional import MaxPooling2D
-from PIL import Image
-from keras.models import Sequential
-from keras.layers.core import Dense, Activation
 import numpy as np
-from keras.callbacks import Callback
-from keras.optimizers import SGD
-from keras.optimizers import Adam
-import pandas
 import matplotlib.pyplot as plt
-import keras
-from keras.utils import np_utils
 from keras import backend as K
-from keras.models import model_from_json
 from keras.models import load_model
 
 
